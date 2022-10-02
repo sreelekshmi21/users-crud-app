@@ -1,114 +1,79 @@
-import React from "react";
-import {
-  Datagrid,
-  ListContextProvider,
-  ListToolbar,
-  TextField,
-  useRecordContext,
-  FunctionField,
-  useListController,
-  Button,
-  Pagination,
-  BulkDeleteButton,
-  SelectField,
-} from "react-admin";
+import React, {Component} from 'react'
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import {Edit, DeleteOutline} from '@material-ui/icons';
 
-import { Box, LinearProgress, Card } from "@mui/material";
-import ViewIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import { Typography } from "@material-ui/core";
-import MultiSelect from "./MultiSelect";
+class TableComponent extends Component{
 
-const Buttonstyle = {
-  position: "absolute",
-  background: "blue",
-  color: "#fff",
-  zIndex: 1,
-  textTransform: "capitalize",
-  width: "150px",
-};
+    constructor(props){
+        super(props)
+        this.state = {
+        }
+    }
 
-export default function TableComponent() {
-    const [field, setField] = React.useState([]);
-  const PostPanel = ({tableData}) => (
-    <Card
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
+    handleEdit = (e,itemId) =>{
 
-        "& a": {
-          textDecoration: "none",
-          color: "inherit",
-        },
-      }}
-    >
-      <table
-        id="expand-table"
-        class="display table-bordered"
-        cellspacing="0"
-        width="100%"
-      >
-        <thead>
-          <tr>
-            <th>Point</th>
-            <th>Entity</th>
-          </tr>
-        </thead>
-        
-        <tbody>
-        {tableData ? tableData?.map((rec,ind) => <tr>
-            <td>{rec?.title}</td>
-            <td>{rec?.body}</td>
-          </tr>) : <Typography>No Rows</Typography>}
-         
-        </tbody>
-      </table>
-    </Card>
-  );
-  const { data, isLoading, ...listContext } = useListController({
-    resource: "posts",
-  });
+        this.props.handleRowEdit(itemId)
+    
+    }
 
-  console.log('#TableComponent',data)
+    handleDelete = (e,itemId) =>{
 
-  const handleShow = (personName) =>{
-    // e.preventDefault()
-    console.log('#handleShow',personName)
-    setField(personName)
-    // setExpanded(true)
+        this.props.handleRowDelete(itemId)
+    
+    }
+
+    render(){
+
+        const {data} = this.props
+
+        return(
+        <>
+            <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                 <TableRow>
+                     <TableCell>ID</TableCell>
+                     <TableCell>Name</TableCell>
+                     <TableCell>Price</TableCell>
+                    <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+            <TableBody>
+               {data.map((item,index) => (
+
+                <TableRow key={item.id}>
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.price}</TableCell>
+                    <TableCell>
+                      <span>
+                         <button 
+                            type="button" 
+                            onClick={(e) => this.handleEdit(e,item.id)}>
+                               <Edit />
+                        </button>
+                     </span>
+                     <span>
+                        <button 
+                           type="button" 
+                           onClick={(e) => this.handleDelete(e,item.id)}>
+                            <DeleteOutline />
+                        </button>
+                     </span>
+                   </TableCell>
+                </TableRow>
+           ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+    </>
+    )
   }
-
-  console.log('#handleShow',field)
-
-  if (isLoading) {
-    return (
-      <Box sx={{ width: "100%" }}>
-        <LinearProgress />
-      </Box>
-    );
-  } else
-    return (
-      <div className="report-select">
-        <ListContextProvider
-          value={{
-            data,
-            ...listContext,
-          }}
-        >
-          <Datagrid expand={<PostPanel tableData={data}/>} bulkActionButtons={<BulkDeleteButton />}>
-            {field?.length === 0 ? <>
-                <TextField source="id" />
-            <TextField source="title" />
-            <TextField source="body" />
-            </> : field?.map((field) => {
-                if(field === 'title')  <TextField source="title" />
-            })}
-            
-            
-          </Datagrid>
-          <MultiSelect handleShow={handleShow}/>
-          <Pagination />
-        </ListContextProvider>
-      </div>
-    );
 }
+export default TableComponent

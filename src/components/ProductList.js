@@ -1,273 +1,199 @@
+import React, { Component } from 'react';
+import TableComponent from './TableComponent'
 
-/*import React, {Component} from 'react'
-import Menu from './Menu'
-import axios from 'axios'
-import Categories from './Categories'
 
-let itemsData = []
 class ProductList extends Component{
 
     constructor(props){
         super(props)
-        this.state  = {
-           menuItems: [],
-           categories:[],
-           activeCategory: '',
-           search:''
+        this.state = {
+            products: [
+                {
+                    id: 101,
+                    name: 'Dell Laptop',
+                    price: 50000
 
-        }
-    }
-    
-    //get data from api
-    async componentDidMount(){
-        
-       console.log('in cdm==============')
-       try{
-          await this.getData()
-       }catch(error){
-           console.log(error)
-       } 
-    }  
-    
-    async getData(){
-       
-       try{
-        const response = await axios.get('https://www.themealdb.com/api/json/v1/1/categories.php')
+                },
+                {
+                    id: 102,
+                    name: 'Samsung TV',
+                    price: 90000
 
-        console.log('dta from api----------',response.data.categories)
+                },
+                {
+                    id: 103,
+                    name: 'Rain Jacket',
+                    price: 7000
 
-        itemsData = response.data.categories
+                },{
+                    id: 104,
+                    name: 'Washing Machine',
+                    price: 30000
 
-        const categories = response.data.categories.map((item) => item.strCategory)
+                },{
+                    id: 105,
+                    name: 'SanDisk',
+                    price: 900
 
-       console.log('in cat----------',categories)
-
-       const allCategories = ['All',...new Set(categories)]
-
-       console.log('allcat------',allCategories)
-
-    
-
-        
-        
-        
-
-        
-        this.setState({
-            menuItems: response.data.categories,
-            categories: allCategories
+                }
+            ],
             
+            productData:{
+                id:'',
+                name:'',
+                price:''
+            },
+            edit: false,
+            mainId: null
         }
-        ) 
-
-       }catch(error){
-           console.log(error)
-       } 
     }
+
     
-    filterItems = (category) =>{
-
-        
-        console.log('in filter func--------',category)
-
-        
-        const filteredList = (category === 'All') 
-                            ? itemsData
-                            : (itemsData.filter((item) => item.strCategory === category))
-
-        console.log('in filtered list-----',filteredList)
-
-        this.setState({
-            menuItems: filteredList,
-            activeCategory: category
-        })
-    }
-
-
     handleChange = (e) =>{
 
-        console.log('handle change------',e.target.value)
-
         this.setState({
-            [e.target.name]: e.target.value
+            productData:{
+                ...this.state.productData,
+                [e.target.name] : e.target.value
+            
+            }
         })
     }
-
-
-    handleSearch = (e) =>{
+    
+    handleSubmit = (e) =>{
 
         e.preventDefault()
 
-        console.log('in submit--------')
-
-        const searchList =   Object.values(itemsData)                        
-
-        console.log('in searck---------------',searchList)
-
-    }
-
-    render(){
-
-        const {menuItems, categories, activeCategory, search} = this.state
-
-        console.log('in=render',menuItems)
-
-        
-        
-    return (
-        <div className="container">
-            <div className="row">
-                <div className="col-md-12">
-                    <h2>Our Menu</h2>
-                    <form onSubmit={this.handleSearch}>
-                        <input type="text" 
-                               name="search"
-                               value={search}
-                               placeholder="Enter Search value...."
-                               onChange={this.handleChange} 
-
-                        />
-                        <button type="submit" 
-                                className="btn btn-success"
-                                       
-                        >Search</button>
-                    </form>
-                </div>
-            </div>
-            <div className="row">
-              <div className="col-md-12">
-                 <Categories categories={categories}
-                             activeCategory={activeCategory}
-                             filterItems={this.filterItems}
-                 />
-              </div>
-            </div>   
-            <div className="row">
-            
-                   <Menu menuItems={menuItems}/>
-            
-            </div>   
-        </div>  
-    )
-    }
-}
-export default ProductList*/
-
-
-import React, {Component} from 'react'
-import axios from 'axios'
-import Menu from './Menu'
-import {Link} from 'react-router-dom'
-
-class ProductList extends Component{
-
-    constructor(props){
-        super(props)
-        this.state  = {
-           
-           searchTerm:'',
-           receipes: [] 
+        if(this.state.edit){
+            this.updateProduct(this.state.productData)
+        }
+        else{
+            this.addProduct(this.state.productData)
         }
     }
     
-    //get data from api
-    async componentDidMount(){
-        
-       console.log('in cdm==============')
-       /*try{
-          await this.getReceipes()
-       }catch(error){
-           console.log(error)
-       } */
-    }  
+    addProduct = (newProd) =>{
 
-    async getSearchReceipes(){
-       
-       try{
-        const response = await axios.get(`https://api.edamam.com/search?q=${this.state.searchTerm}&app_id=dd81b91c&app_key=84c7d0cea7c38def39623bd890c27947`)
-        
-        
-        //https://www.themealdb.com/api/json/v1/1/categories.php')
-
-        console.log('dta from api----------',response.data)
-
-
-        this.setState({
-            receipes: response.data.hits
+       this.setState({
+            products: [...this.state.products,newProd],
+            productData:{
+                id: '',
+                name:'',
+                price:''
+            }
         })
-
-
-    
-
-        
-        
-        
-
-        
-                 
-
-       }catch(error){
-           console.log(error)
-       } 
     }
-    
+  
 
+   handleRowEdit = (itemId) =>{
 
-   handleChange = (e) =>{
+    const editedItem = this.state.products.find((elem) => elem.id === itemId)
 
-      console.log('eeeeeeeee',e.target.value)
-
-      this.setState({
-          searchTerm : e.target.value
-      })
+    this.setState({
+        productData:{
+            id: editedItem.id,
+            name:editedItem.name,
+            price: editedItem.price
+        },
+        edit: true,
+        mainId: itemId
+    })
    }
 
-   handleSubmit = (e) =>{
+   updateProduct = (updatedProd) =>{
 
-      e.preventDefault()
-      console.log('in submit-----')
+    const updatedProducts = this.state.products.map((prod) => {
+        
+        if(prod.id === this.state.mainId){
+            return {...prod,
+                     id:updatedProd.id,
+                     name:updatedProd.name,
+                     price: updatedProd.price
+                   }
+        }
+        return prod
+    })
+    this.setState({
+        products: updatedProducts,
+        productData:{
+            id:'',
+            name:'',
+            price:''
+        },
+        edit:false,
+        mainId:null
+    })
+   }
 
-      this.getSearchReceipes()
+   handleRowDelete = (itemId) =>{
 
+    const newProducts = this.state.products.filter((prod) => (
+                     prod.id !== itemId
+    ))
+    this.setState({
+           products: newProducts
+       })
    }
 
     render(){
 
-     const {searchTerm, receipes} = this.state
-        
-        
-    return (
-        <div className="food-container">
-               <h1>Food Receipe Plaza</h1>
-               <form className="food-form" onSubmit={this.handleSubmit}>
-                   <input type="text"
-                          className="food-input" 
-                          placeholder="Give ingredients"
-                          name="searchTerm"
-                          value={searchTerm}
-                          onChange={this.handleChange} 
-                   
-                   />
-                   <button type="submit"
-                           className="btn btn-success food-btn"
-
-                   >
-                       Search
-                   </button>
-               </form>
-               <div className="app-recipe">
-                   {receipes.map((recipe,index) => {
-                       return <Menu key={index} recipe={recipe} /> 
-                   })}
-               </div>
-               <div className="text-center">
-            <Link to='/tes'
-                    className="btn btn-success"
-            >Go To Tes</Link>
-        </div>
-        </div>  
+    const{products,productData,edit} = this.state
+    return(
+        <div>
+            <h2>Product List</h2>
+            <TableComponent 
+                  data={products}
+                  handleRowEdit={this.handleRowEdit}
+                  handleRowDelete={this.handleRowDelete}
+            /> 
+            <div className="container">     
+                <h3 className="text-center">
+                    {edit ? 'Update Product' : 'Add Product'}
+                </h3>             
+            <form onSubmit={(e) => this.handleSubmit(e)}>
+                <div className="row">
+                 <div className="form-group">
+                    <label>Product ID</label>
+                    <input type="text"
+                           name="id" 
+                           required
+                           className="form-control" 
+                           value={productData.id === '' ? '' :productData.id}
+                           onChange={this.handleChange}
+                           placeholder="Product ID"/>
+                </div>
+                <div className="form-group">
+                    <label>Product Name</label>
+                    <input type="text"
+                           name="name" 
+                           required
+                           className="form-control" 
+                          value={productData.name === '' ? '' :productData.name}
+                          onChange={this.handleChange}
+                          placeholder="Product Name"/>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="text" 
+                           name="price"
+                           required
+                          value={productData.price === '' ? '' :productData.price}
+                         className="form-control" 
+                        onChange={this.handleChange} 
+                       placeholder="Price"/>
+                 </div>
+              </div>
+          <div className="text-center form-btn" style={{
+                                                    marginTop:10,
+                                                    marginBottom:50}}>
+            <button type="submit" className="btn btn-primary">
+                {edit ? 'Update Product' : 'Add Product'}
+            </button>
+          </div>
+      </form>
+    </div>    
+</div>
     )
-    }
+  }
 }
 export default ProductList
-
