@@ -1,21 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
-import {Route,Switch,Link} from 'react-router-dom';
+import React,{useState} from 'react';
+import {Route,Routes,Link} from 'react-router-dom';
+import Main  from './components/Main';
+import Navbar from './components/Navbar';
+import './menu.css'
 import ProductList from './components/ProductList';
 
+const App = () =>{
 
-function App() {
   return (
-    <div className="app">
-      <div className="text-center">
-          <h1>Products App</h1>
-          <Link to='/productlist' className="btn btn-primary">Go to Products List</Link>
-      </div>
-      <Switch>
-        <Route path='/productlist' component={ProductList}/>
-      </Switch>
-    </div>
-  );
+    <>    
+        <Navbar/>       
+        <div className="container" style={{marginTop:60}}>
+          <Routes>
+            <Route exact path='/' element={<Main />} />
+            <Route path='/products' element={<ProductList />} />
+          </Routes>   
+        </div> 
+ </>
+  );    
 }
-
-export default App;
+export default App

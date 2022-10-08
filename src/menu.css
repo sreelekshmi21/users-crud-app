@@ -1,0 +1,63 @@
+.filter-btn{
+    
+    background-color: yellow;
+    text-transform: capitalize;
+    cursor: pointer;
+    border-radius:0.25rem;
+}
+.active{
+    background-color: wheat;
+}
+.imageHeight{
+    height: 600px;
+    overflow-y: auto;
+}
+.food-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding:40px 24px;
+}
+*{
+    margin: 0px;
+    padding: 0px;
+}
+.food-input{
+   padding: 6px 16px;
+   min-width: 200px;
+   max-width: 100vw;
+   font-size: 15px;
+}
+.food-btn{
+    padding:6px 16px;
+    margin-left:6px;
+    border-radius: 5px;
+}
+.food-btn:hover{
+    padding:6px 16px;
+    margin-left:6px;
+    border-radius: 5px;
+    background-color: yellow;
+    color:black
+}
+.food-form{
+    margin-top:18px;
+}
+.recipe-title{
+  max-width: 200px;
+  text-align: center;
+  margin: 12px 0px;
+}
+.recipe-img{
+    width:200px;
+    height:200px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+.app-recipe{
+    margin-top:24px;
+    display: grid;
+    grid-template-columns: 230px 230px;
+    align-items: baseline;
+}

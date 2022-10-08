@@ -1,199 +1,95 @@
-import React, { Component } from 'react';
-import TableComponent from './TableComponent'
+import React, {useState} from 'react'
+import axios from 'axios'
+import Menu from './Menu'
+import {Link} from 'react-router-dom'
+import LoadingComponent from './LoadingComponent'
 
+export default function ProductList(){
 
-class ProductList extends Component{
-
-    constructor(props){
-        super(props)
-        this.state = {
-            products: [
-                {
-                    id: 101,
-                    name: 'Dell Laptop',
-                    price: 50000
-
-                },
-                {
-                    id: 102,
-                    name: 'Samsung TV',
-                    price: 90000
-
-                },
-                {
-                    id: 103,
-                    name: 'Rain Jacket',
-                    price: 7000
-
-                },{
-                    id: 104,
-                    name: 'Washing Machine',
-                    price: 30000
-
-                },{
-                    id: 105,
-                    name: 'SanDisk',
-                    price: 900
-
-                }
-            ],
-            
-            productData:{
-                id:'',
-                name:'',
-                price:''
-            },
-            edit: false,
-            mainId: null
-        }
-    }
-
+    const [searchTerm, setSearchTerm] = useState(null)
+    const [receipes, setReceipes] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
     
-    handleChange = (e) =>{
 
-        this.setState({
-            productData:{
-                ...this.state.productData,
-                [e.target.name] : e.target.value
-            
-            }
-        })
-    }
-    
-    handleSubmit = (e) =>{
-
-        e.preventDefault()
-
-        if(this.state.edit){
-            this.updateProduct(this.state.productData)
-        }
-        else{
-            this.addProduct(this.state.productData)
-        }
-    }
-    
-    addProduct = (newProd) =>{
-
-       this.setState({
-            products: [...this.state.products,newProd],
-            productData:{
-                id: '',
-                name:'',
-                price:''
-            }
-        })
-    }
-  
-
-   handleRowEdit = (itemId) =>{
-
-    const editedItem = this.state.products.find((elem) => elem.id === itemId)
-
-    this.setState({
-        productData:{
-            id: editedItem.id,
-            name:editedItem.name,
-            price: editedItem.price
-        },
-        edit: true,
-        mainId: itemId
-    })
-   }
-
-   updateProduct = (updatedProd) =>{
-
-    const updatedProducts = this.state.products.map((prod) => {
+    const getSearchReceipes = async() => {       
+      
         
-        if(prod.id === this.state.mainId){
-            return {...prod,
-                     id:updatedProd.id,
-                     name:updatedProd.name,
-                     price: updatedProd.price
-                   }
-        }
-        return prod
-    })
-    this.setState({
-        products: updatedProducts,
-        productData:{
-            id:'',
-            name:'',
-            price:''
-        },
-        edit:false,
-        mainId:null
-    })
+        await axios.get(`https://api.edamam.com/search?q=${searchTerm}&app_id=dd81b91c&app_key=84c7d0cea7c38def39623bd890c27947`)
+        .then((response) => {
+            console.log('#API RES dta from api----------',response.data)
+            setIsLoading(false)
+            setReceipes(response?.data?.hits)
+        }).catch((err) =>{
+            console.log('#API ERR',err) 
+            setIsLoading(false)
+        })
+        
+        
+        //https://www.themealdb.com/api/json/v1/1/categories.php')
+    }    
+
+
+   const handleChange = (e) =>{
+      console.log('eeeeeeeee',e.target.value)
+      setSearchTerm(e.target.value)
    }
 
-   handleRowDelete = (itemId) =>{
 
-    const newProducts = this.state.products.filter((prod) => (
-                     prod.id !== itemId
-    ))
-    this.setState({
-           products: newProducts
-       })
+
+   const handleSubmit = (e) =>{
+      e.preventDefault()
+      console.log('in submit-----')
+      setIsLoading(true)
+      getSearchReceipes()
    }
 
-    render(){
-
-    const{products,productData,edit} = this.state
-    return(
-        <div>
-            <h2>Product List</h2>
-            <TableComponent 
-                  data={products}
-                  handleRowEdit={this.handleRowEdit}
-                  handleRowDelete={this.handleRowDelete}
-            /> 
-            <div className="container">     
-                <h3 className="text-center">
-                    {edit ? 'Update Product' : 'Add Product'}
-                </h3>             
-            <form onSubmit={(e) => this.handleSubmit(e)}>
-                <div className="row">
-                 <div className="form-group">
-                    <label>Product ID</label>
-                    <input type="text"
-                           name="id" 
-                           required
-                           className="form-control" 
-                           value={productData.id === '' ? '' :productData.id}
-                           onChange={this.handleChange}
-                           placeholder="Product ID"/>
-                </div>
-                <div className="form-group">
-                    <label>Product Name</label>
-                    <input type="text"
-                           name="name" 
-                           required
-                           className="form-control" 
-                          value={productData.name === '' ? '' :productData.name}
-                          onChange={this.handleChange}
-                          placeholder="Product Name"/>
-                </div>
-                <div class="form-group">
-                    <label>Price</label>
-                    <input type="text" 
-                           name="price"
-                           required
-                          value={productData.price === '' ? '' :productData.price}
-                         className="form-control" 
-                        onChange={this.handleChange} 
-                       placeholder="Price"/>
-                 </div>
-              </div>
-          <div className="text-center form-btn" style={{
-                                                    marginTop:10,
-                                                    marginBottom:50}}>
-            <button type="submit" className="btn btn-primary">
-                {edit ? 'Update Product' : 'Add Product'}
-            </button>
-          </div>
-      </form>
-    </div>    
-</div>
+        
+        
+        
+    return (
+        <>
+        <div className="food-container">
+               <h1>Food Receipe Plaza</h1>
+               <form className="food-form" onSubmit={handleSubmit}>
+                   <input type="text"
+                          className="food-input" 
+                          placeholder="Give ingredients"
+                          name="searchTerm"
+                          value={searchTerm}
+                          onChange={handleChange} 
+                   
+                   />
+                   {/* <LoadingButton
+                    loading={isLoading}
+                    loadingPosition="start"
+                    variant="outlined"
+                    fullWidth
+                    className="btn btn-success food-btn"
+                    disabled={
+                      searchTerm == null 
+                    }  
+                    onClick={handleSubmit}
+                  ></LoadingButton> */}
+                   <button type="submit"
+                           className="btn btn-success food-btn"
+                   >
+                       Search
+                   </button>
+                   {/* <h5>{searchTerm == null && 'Enter something to search for'}</h5> */}
+               </form>
+               <div className="app-recipe">
+                   {receipes?.length > 0 ? receipes.map((receipe,index) => {
+                       return <Menu key={index} receipe={receipe} /> 
+                   }) : <h5>No List, give a valid search</h5>}
+               </div>
+               <div className="text-center">
+            {/* <Link to='/tes'
+                    className="btn btn-success"
+            >Go To Tes</Link> */}
+        </div>
+        </div> 
+        <LoadingComponent load={isLoading}/>
+        </>  
     )
-  }
 }
-export default ProductList
+
