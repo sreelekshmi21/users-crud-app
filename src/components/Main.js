@@ -3,6 +3,7 @@ import React,{useState} from 'react';
 import {Link} from 'react-router-dom'
 import AddUser from './AddUser';
 import EditUser from './EditUser';
+import Navbar from './Navbar';
 import UserTable from './UserTable';
 
 
@@ -95,6 +96,8 @@ const Main = () =>{
 
   return (
     <>
+    <Navbar />
+    <div className="container" style={{marginTop: "80px"}}>
     <div className="row">
            <div className="col-md-5">
              {edit ? (                 
@@ -115,11 +118,15 @@ const Main = () =>{
            </div>
         </div>
         <div className="text-center">
-            <Link to='/products'
+            <Link to='/restaurant'
                     className="btn btn-success"
             >Go To Restaurant</Link>
+        </div> 
+        <div className="text-center" style={{marginTop: "20px"}}>
+            <Link to='/posts'
+            >Back to Posts</Link>
+        </div> 
         </div>
-   
     </>        
   );    
 }

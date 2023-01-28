@@ -4,7 +4,7 @@ import Menu from './Menu'
 import {Link} from 'react-router-dom'
 import LoadingComponent from './LoadingComponent'
 
-export default function ProductList(){
+export default function Restaurant(){
 
     const [searchTerm, setSearchTerm] = useState(null)
     const [receipes, setReceipes] = useState([])
@@ -50,6 +50,14 @@ export default function ProductList(){
         <>
         <div className="food-container">
                <h1>Food Receipe Plaza</h1>
+               <br />
+               <div>
+             <Link to='/users-list'
+                    
+            >BACK TO USERS</Link>
+        </div>
+        <br />
+        <br />
                <form className="food-form" onSubmit={handleSubmit}>
                    <input type="text"
                           className="food-input" 
